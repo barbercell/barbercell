@@ -10,6 +10,18 @@
 </head>
 <body class="home-page">
 
+  <!-- Splash Screen (primeiro acesso) -->
+  <div class="splash-screen" id="splash-screen">
+    <div class="splash-logo-wrap">
+      <img src="logo.jpg" alt="BarberCell" class="splash-logo" />
+    </div>
+    <p class="splash-slogan">BarberCell</p>
+    <p class="splash-sub">Conexão &amp; Régua</p>
+    <div class="splash-bar-wrap">
+      <div class="splash-bar" id="splash-bar"></div>
+    </div>
+  </div>
+
   <div class="home-container">
 
     <!-- Logo -->
@@ -33,6 +45,17 @@
       <button class="btn btn-primary btn-full" id="btn-phone">Continuar →</button>
     </div>
 
+    <!-- TELA 1b: Confirmar número -->
+    <div class="entry-card hidden" id="card-confirm-phone">
+      <div class="welcome-icon">📱</div>
+      <h3 class="welcome-title" style="font-size:1.1rem">Este é o seu número?</h3>
+      <p class="confirm-phone-display" id="confirm-phone-display"></p>
+      <div class="entry-actions">
+        <button class="btn btn-outline" id="btn-edit-phone">✎ Editar</button>
+        <button class="btn btn-primary" id="btn-confirm-phone">Sim, continuar →</button>
+      </div>
+    </div>
+
     <!-- TELA 2: Senha admin -->
     <div class="entry-card hidden" id="card-password">
       <div class="admin-badge">🔐 Área Administrativa</div>
@@ -50,13 +73,28 @@
 
     <!-- TELA 3: Bem-vindo de volta -->
     <div class="entry-card hidden" id="card-welcome">
-      <div class="welcome-icon">✂️</div>
+      <div class="welcome-icon">👋</div>
       <h3 class="welcome-title">Bem-vindo de volta,<br><span id="welcome-name"></span>!</h3>
-      <p class="entry-desc" style="margin-top:8px">O que vamos fazer hoje?</p>
-      <div class="entry-actions" style="flex-direction:column; gap:10px">
-        <button class="btn btn-primary btn-full" id="btn-agendar-returning">✂ Agendar Horário</button>
-        <button class="btn btn-secondary btn-full" id="btn-consultar-returning">🔍 Ver meus agendamentos</button>
+
+      <!-- Próximo agendamento (preenchido via JS se houver) -->
+      <div class="next-booking-wrap hidden" id="next-booking-wrap">
+        <div class="next-booking-card" id="next-booking-card"></div>
       </div>
+
+      <p class="entry-desc" style="margin-top:8px">O que você precisa?</p>
+      <div class="choice-grid">
+        <button class="choice-btn barber" id="btn-agendar-returning">
+          <div class="choice-icon-wrap">✂️</div>
+          <strong class="choice-name">Barbearia</strong>
+          <span class="choice-desc">Cortes, barba e mais</span>
+        </button>
+        <button class="choice-btn tech" id="btn-choice-at-welcome">
+          <div class="choice-icon-wrap">📱</div>
+          <strong class="choice-name">Assistência Técnica</strong>
+          <span class="choice-desc">Celulares e eletrônicos</span>
+        </button>
+      </div>
+      <button class="btn btn-secondary btn-full" id="btn-consultar-returning" style="margin-top:10px">🔍 Ver meus agendamentos</button>
       <button class="btn btn-outline btn-full" id="btn-back-welcome" style="margin-top:8px">← Não sou eu</button>
     </div>
 
@@ -64,15 +102,60 @@
     <div class="entry-card hidden" id="card-register">
       <div class="welcome-icon">👋</div>
       <h3 class="welcome-title">Você é novo por aqui!</h3>
-      <p class="entry-desc" style="margin-top:8px">Vamos fazer seu cadastro rápido?</p>
-      <div class="form-group">
-        <label for="register-name">Seu nome</label>
-        <input type="text" id="register-name" placeholder="Como você se chama?" autocomplete="name" />
-        <span class="field-error" id="err-register-name"></span>
+      <p class="entry-desc" style="margin-top:8px">Cadastro rápido — só o seu nome!</p>
+      <div class="name-row">
+        <div class="form-group">
+          <label for="register-nome">Nome</label>
+          <input type="text" id="register-nome" placeholder="Ex: Rafael" autocomplete="given-name" />
+          <span class="field-error" id="err-register-nome"></span>
+        </div>
+        <div class="form-group">
+          <label for="register-sobrenome">Sobrenome</label>
+          <input type="text" id="register-sobrenome" placeholder="Ex: Silva" autocomplete="family-name" />
+          <span class="field-error" id="err-register-sobre"></span>
+        </div>
       </div>
       <div class="entry-actions">
         <button class="btn btn-outline" id="btn-back-register">← Voltar</button>
         <button class="btn btn-primary" id="btn-register">Cadastrar →</button>
+      </div>
+    </div>
+
+    <!-- TELA 5: Escolher serviço (novo cliente) -->
+    <div class="entry-card hidden" id="card-choose-service">
+      <div class="welcome-icon">🏪</div>
+      <h3 class="welcome-title">O que você procura?</h3>
+      <p class="entry-desc">Escolha o serviço</p>
+      <div class="choice-grid">
+        <button class="choice-btn barber" id="btn-choice-barbearia">
+          <div class="choice-icon-wrap">✂️</div>
+          <strong class="choice-name">Barbearia</strong>
+          <span class="choice-desc">Cortes, barba e mais</span>
+        </button>
+        <button class="choice-btn tech" id="btn-choice-assistencia">
+          <div class="choice-icon-wrap">📱</div>
+          <strong class="choice-name">Assistência Técnica</strong>
+          <span class="choice-desc">Celulares e eletrônicos</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- TELA 6: Quem é você? (admin) -->
+    <div class="entry-card hidden" id="card-choose-admin">
+      <div class="welcome-icon">👤</div>
+      <h3 class="welcome-title">Quem é você?</h3>
+      <p class="entry-desc">Selecione seu painel</p>
+      <div class="choice-grid">
+        <button class="choice-btn ana" id="btn-admin-ana">
+          <div class="choice-icon-wrap">📱</div>
+          <strong class="choice-name">Ana</strong>
+          <span class="choice-desc">Assistência Técnica</span>
+        </button>
+        <button class="choice-btn dammy" id="btn-admin-dammy">
+          <div class="choice-icon-wrap">✂️</div>
+          <strong class="choice-name">Dammy</strong>
+          <span class="choice-desc">Barbearia</span>
+        </button>
       </div>
     </div>
 
@@ -112,6 +195,67 @@
 
   <script src="api.js"></script>
   <script>
+    // --- Splash screen (só na primeira visita da sessão) ---
+    (function initSplash() {
+      const bar     = document.getElementById('splash-bar');
+      const splash  = document.getElementById('splash-screen');
+      let   pct     = 0;
+      const iv = setInterval(() => {
+        pct += Math.random() * 14 + 4;
+        if (pct >= 100) { pct = 100; clearInterval(iv); }
+        bar.style.width = pct + '%';
+        if (pct >= 100) setTimeout(() => {
+          splash.classList.add('hide');
+          setTimeout(() => splash.remove(), 650);
+        }, 180);
+      }, 70);
+    })();
+
+    // --- Loading messages temáticas (barbearia) ---
+    const LOADING_BARBER = [
+      'Separando a gilete...', 'Ajustando o pezinho...', 'Trocando o pente...',
+      'Preparando a navalha...', 'Passando a régua...', 'Aquecendo a toalha...'
+    ];
+    const LOADING_AT = [
+      'Verificando o conector...', 'Testando a tela...', 'Checando a bateria...',
+      'Diagnóstico em andamento...', 'Limpando contatos...', 'Testando o software...'
+    ];
+    let _loadingTimer = null;
+    function showLoading(msg, mode) {
+      const msgs  = mode === 'at' ? LOADING_AT : LOADING_BARBER;
+      const msgEl = document.getElementById('loading-msg');
+      msgEl.textContent = msg || msgs[0];
+      document.getElementById('loading-overlay').classList.remove('hidden');
+      let i = 0;
+      _loadingTimer = setInterval(() => {
+        i = (i + 1) % msgs.length;
+        msgEl.textContent = msgs[i];
+      }, 1800);
+    }
+    function hideLoading() {
+      clearInterval(_loadingTimer);
+      document.getElementById('loading-overlay').classList.add('hidden');
+    }
+
+    // --- Helper: aplica estado logado ---
+    function setLoggedIn(name) {
+      document.body.classList.add('is-logged-in');
+    }
+    function clearLoggedIn() {
+      document.body.classList.remove('is-logged-in');
+    }
+
+    // --- Auto-restaurar sessão se já logado ---
+    (function autoRestore() {
+      const phone = sessionStorage.getItem('clientPhone');
+      const name  = sessionStorage.getItem('clientName');
+      if (!phone || !name) return;
+      setLoggedIn(name);
+      document.getElementById('welcome-name').textContent = name;
+      showCard('card-welcome');
+      loadNextBooking(phone);
+    })();
+
     // Formata telefone enquanto digita
     document.getElementById('phone-input').addEventListener('input', function () {
       let v = this.value.replace(/\D/g, '').slice(0, 11);
@@ -124,41 +268,96 @@
     // Enter nos campos
     document.getElementById('phone-input').addEventListener('keydown',    e => { if (e.key === 'Enter') document.getElementById('btn-phone').click(); });
     document.getElementById('password-input').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('btn-login').click(); });
-    document.getElementById('register-name').addEventListener('keydown',  e => { if (e.key === 'Enter') document.getElementById('btn-register').click(); });
+    document.getElementById('register-nome').addEventListener('keydown',     e => { if (e.key === 'Enter') document.getElementById('register-sobrenome').focus(); });
+    document.getElementById('register-sobrenome').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('btn-register').click(); });
 
-    // --- TELA 1: Verifica telefone ---
-    document.getElementById('btn-phone').addEventListener('click', async () => {
+    // --- TELA 1: Mostra confirmação do número ---
+    document.getElementById('btn-phone').addEventListener('click', () => {
       const raw   = document.getElementById('phone-input').value.replace(/\D/g, '');
       const errEl = document.getElementById('err-phone');
       errEl.textContent = '';
-
       if (raw.length < 10) { errEl.textContent = 'Digite um número válido.'; return; }
+      let fmt = raw;
+      if (raw.length === 11)      fmt = raw.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+      else if (raw.length === 10) fmt = raw.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
+      document.getElementById('confirm-phone-display').textContent = fmt;
+      showCard('card-confirm-phone');
+    });
 
-      showLoading('Verificando...');
+    // --- TELA 1b: Confirmar → chama API ---
+    document.getElementById('btn-confirm-phone').addEventListener('click', async () => {
+      const raw = document.getElementById('phone-input').value.replace(/\D/g, '');
+      showLoading('Verificando...', 'barber');
       try {
         const res = await API.checkPhone(raw);
-
         if (res.type === 'admin') {
           sessionStorage.setItem('adminPhone', raw);
           showCard('card-password');
-
         } else if (res.type === 'returning') {
           sessionStorage.setItem('clientPhone', raw);
           sessionStorage.setItem('clientName',  res.nome);
           document.getElementById('welcome-name').textContent = res.nome;
+          setLoggedIn(res.nome);
           showCard('card-welcome');
-
+          loadNextBooking(raw);
         } else {
-          // Novo cliente
           sessionStorage.setItem('clientPhone', raw);
+          setLoggedIn(null);
           showCard('card-register');
-          document.getElementById('register-name').focus();
+          document.getElementById('register-nome').focus();
         }
       } catch {
-        errEl.textContent = 'Erro ao verificar. Tente novamente.';
+        showCard('card-phone');
+        document.getElementById('err-phone').textContent = 'Erro ao verificar. Tente novamente.';
       } finally {
         hideLoading();
       }
+    });
+
+    // --- Próximo agendamento nas próximas 24h ---
+    async function loadNextBooking(phone) {
+      try {
+        const data = await API.consultarAgendamento(phone);
+        if (!data || !data.length) return;
+        const now  = new Date();
+        const next = data
+          .filter(b => {
+            if (!b.dataAgendada || !b.horario) return false;
+            if (b.status === 'CANCELADO' || b.status === 'REJEITADO') return false;
+            const [h, m] = (b.horario || '00:00').split(':').map(Number);
+            const [y, mo, d] = b.dataAgendada.split('-').map(Number);
+            const dt = new Date(y, mo - 1, d, h, m);
+            const diff = (dt - now) / 36e5; // horas
+            return diff >= 0 && diff <= 24;
+          })
+          .sort((a, b) => a.dataAgendada.localeCompare(b.dataAgendada) || a.horario.localeCompare(b.horario))[0];
+
+        if (!next) return;
+        const [y, mo, d] = next.dataAgendada.split('-');
+        const statusColors = {
+          'AGUARDANDO CONFIRMAÇÃO': '#FF9F0A',
+          'CONFIRMADO': '#30D158',
+          'CONCLUÍDO':  '#5E5CE6',
+        };
+        const color = statusColors[next.status] || '#7A9FBE';
+        document.getElementById('next-booking-card').innerHTML = `
+          <div class="nb-header">
+            <span class="nb-tag">📅 Próximas 24h</span>
+            <span class="nb-status" style="color:${color}">${next.status}</span>
+          </div>
+          <div class="nb-info">
+            <span class="nb-service">${next.servico}</span>
+            <span class="nb-datetime">${d}/${mo}/${y} às ${next.horario}</span>
+          </div>
+        `;
+        document.getElementById('next-booking-wrap').classList.remove('hidden');
+      } catch {}
+    }
+
+    // --- TELA 1b: Editar número ---
+    document.getElementById('btn-edit-phone').addEventListener('click', () => {
+      showCard('card-phone');
+      document.getElementById('phone-input').focus();
     });
 
     // --- TELA 2: Login admin ---
@@ -168,14 +367,14 @@
       errEl.textContent = '';
       if (!pwd) { errEl.textContent = 'Digite a senha.'; return; }
 
-      showLoading('Verificando...');
+      showLoading('Verificando...', 'barber');
       try {
         const phone = sessionStorage.getItem('adminPhone') || '';
         const res   = await API.adminLogin(phone, pwd);
         if (res.success) {
           sessionStorage.setItem('adminAuth', 'true');
           sessionStorage.setItem('adminPwd', pwd);
-          window.location.href = 'admin.html';
+          showCard('card-choose-admin');
         } else {
           errEl.textContent = 'Senha incorreta.';
           document.getElementById('password-input').value = '';
@@ -191,6 +390,9 @@
     document.getElementById('btn-agendar-returning').addEventListener('click', () => {
       window.location.href = 'agendamento.html';
     });
+    document.getElementById('btn-choice-at-welcome').addEventListener('click', () => {
+      window.location.href = 'assistencia.html';
+    });
     document.getElementById('btn-consultar-returning').addEventListener('click', () => {
       const phone = sessionStorage.getItem('clientPhone') || '';
       window.location.href = `consulta.html?phone=${phone}`;
@@ -198,33 +400,61 @@
 
     // --- TELA 4: Cadastro novo cliente ---
     document.getElementById('btn-register').addEventListener('click', async () => {
-      const nome  = document.getElementById('register-name').value.trim();
-      const errEl = document.getElementById('err-register-name');
-      errEl.textContent = '';
+      const nome      = document.getElementById('register-nome').value.trim();
+      const sobrenome = document.getElementById('register-sobrenome').value.trim();
+      const errNome   = document.getElementById('err-register-nome');
+      const errSobre  = document.getElementById('err-register-sobre');
+      errNome.textContent = ''; errSobre.textContent = '';
 
-      if (nome.length < 2) { errEl.textContent = 'Digite seu nome.'; return; }
+      if (nome.length < 2)      { errNome.textContent  = 'Digite seu nome.';      return; }
+      if (sobrenome.length < 2) { errSobre.textContent = 'Digite seu sobrenome.'; return; }
 
+      const nomeCompleto = `${nome} ${sobrenome}`;
       showLoading('Salvando cadastro...');
       try {
         const phone = sessionStorage.getItem('clientPhone') || '';
-        await API.registerClient(phone, nome);
-        sessionStorage.setItem('clientName', nome);
-        window.location.href = 'agendamento.html';
+        await API.registerClient(phone, nomeCompleto);
+        sessionStorage.setItem('clientName', nomeCompleto);
+        showCard('card-choose-service');
       } catch {
-        errEl.textContent = 'Erro ao cadastrar. Tente novamente.';
+        errNome.textContent = 'Erro ao cadastrar. Tente novamente.';
       } finally {
         hideLoading();
       }
     });
 
     // --- Voltar ---
-    document.getElementById('btn-back-phone').addEventListener('click',    () => showCard('card-phone'));
-    document.getElementById('btn-back-welcome').addEventListener('click',  () => showCard('card-phone'));
-    document.getElementById('btn-back-register').addEventListener('click', () => showCard('card-phone'));
+    document.getElementById('btn-back-phone').addEventListener('click', () => { clearLoggedIn(); showCard('card-phone'); });
+    document.getElementById('btn-back-welcome').addEventListener('click', () => {
+      sessionStorage.removeItem('clientPhone');
+      sessionStorage.removeItem('clientName');
+      clearLoggedIn();
+      showCard('card-phone');
+    });
+    document.getElementById('btn-back-register').addEventListener('click', () => { clearLoggedIn(); showCard('card-phone'); });
+
+    // --- Escolha de serviço (cliente) ---
+    document.getElementById('btn-choice-barbearia').addEventListener('click', () => {
+      window.location.href = 'agendamento.html';
+    });
+    document.getElementById('btn-choice-assistencia').addEventListener('click', () => {
+      window.location.href = 'assistencia.html';
+    });
+
+    // --- Escolha de admin ---
+    document.getElementById('btn-admin-ana').addEventListener('click', () => {
+      sessionStorage.setItem('adminType', 'ana');
+      window.location.href = 'assistencia-admin.html';
+    });
+    document.getElementById('btn-admin-dammy').addEventListener('click', () => {
+      sessionStorage.setItem('adminType', 'dammy');
+      window.location.href = 'admin.html';
+    });
 
     // --- Helpers ---
     function showCard(id) {
-      ['card-phone','card-password','card-welcome','card-register']
+      ['card-phone','card-confirm-phone','card-password','card-welcome','card-register',
+       'card-choose-service','card-choose-admin']
         .forEach(c => document.getElementById(c).classList.add('hidden'));
       document.getElementById(id).classList.remove('hidden');
     }
@@ -237,18 +467,6 @@
     function hideLoading() {
       document.getElementById('loading-overlay').classList.add('hidden');
     }
-
-    // Exibe telefone da barbearia
-    (async () => {
-      try {
-        const cfg = await API.getConfig();
-        const raw = (cfg.telefoneBarbearia || '').replace(/\D/g, '');
-        if (raw.length >= 10) {
-          const fmt = raw.replace(/^55(\d{2})(\d{4,5})(\d{4})$/, '($1) $2-$3');
-          document.getElementById('info-phone').textContent = fmt || raw;
-        }
-      } catch {}
-    })();
   </script>
 </body>
 </html>

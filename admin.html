@@ -6,93 +6,173 @@
   <title>Admin — BarberCell · Conexão & Régua</title>
   <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body class="admin-page">
 
-  <!-- Dashboard (visível após autenticação via index) -->
   <div class="admin-dashboard" id="admin-dashboard">
 
     <header class="admin-header">
       <div class="admin-header-left">
         <img src="logo.jpg" alt="BarberCell" class="admin-logo-img" />
-        <span class="admin-logo">BarberCell</span>
-        <span class="admin-title">Painel Administrativo</span>
+        <div>
+          <span class="admin-logo">BarberCell</span>
+          <span class="admin-title">Painel</span>
+        </div>
       </div>
       <div class="admin-header-right">
-        <button class="btn btn-sm btn-outline" id="refresh-btn">↻ Atualizar</button>
+        <button class="btn btn-sm btn-outline" id="refresh-btn">↻</button>
         <button class="btn btn-sm btn-danger" id="logout-btn">Sair</button>
       </div>
     </header>
 
     <main class="admin-main">
 
-      <!-- Stats Cards -->
-      <div class="stats-grid">
-        <div class="stat-card pending">
-          <div class="stat-icon">⏳</div>
-          <div class="stat-info">
-            <span class="stat-label">Aguardando</span>
-            <strong class="stat-value" id="stat-pending">0</strong>
-          </div>
-        </div>
-        <div class="stat-card confirmed">
-          <div class="stat-icon">✅</div>
-          <div class="stat-info">
-            <span class="stat-label">Confirmados</span>
-            <strong class="stat-value" id="stat-confirmed">0</strong>
-          </div>
-        </div>
-        <div class="stat-card done">
-          <div class="stat-icon">⭐</div>
-          <div class="stat-info">
-            <span class="stat-label">Concluídos</span>
-            <strong class="stat-value" id="stat-done">0</strong>
-          </div>
-        </div>
-        <div class="stat-card cancelled">
-          <div class="stat-icon">❌</div>
-          <div class="stat-info">
-            <span class="stat-label">Cancelados</span>
-            <strong class="stat-value" id="stat-cancelled">0</strong>
-          </div>
-        </div>
+      <!-- Abas principais -->
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="agendamentos">📅 Agendamentos</button>
+        <button class="admin-tab" data-tab="financeiro">💰 Financeiro</button>
+        <button class="admin-tab" data-tab="servicos">✂️ Serviços</button>
       </div>
 
-      <!-- Filters -->
-      <div class="admin-filters">
-        <button class="filter-btn active" data-filter="all">Todos</button>
-        <button class="filter-btn" data-filter="AGUARDANDO CONFIRMAÇÃO">Aguardando</button>
-        <button class="filter-btn" data-filter="CONFIRMADO">Confirmados</button>
-        <button class="filter-btn" data-filter="CONCLUÍDO">Concluídos</button>
-        <button class="filter-btn" data-filter="CANCELADO">Cancelados</button>
-        <button class="filter-btn" data-filter="REJEITADO">Rejeitados</button>
+      <!-- ===== PAINEL: AGENDAMENTOS ===== -->
+      <div class="admin-panel active" id="panel-agendamentos">
+
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+          <div class="stat-card pending">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-info">
+              <span class="stat-label">Aguardando</span>
+              <strong class="stat-value" id="stat-pending">0</strong>
+            </div>
+          </div>
+          <div class="stat-card confirmed">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+              <span class="stat-label">Confirmados</span>
+              <strong class="stat-value" id="stat-confirmed">0</strong>
+            </div>
+          </div>
+          <div class="stat-card done">
+            <div class="stat-icon">⭐</div>
+            <div class="stat-info">
+              <span class="stat-label">Concluídos</span>
+              <strong class="stat-value" id="stat-done">0</strong>
+            </div>
+          </div>
+          <div class="stat-card cancelled">
+            <div class="stat-icon">❌</div>
+            <div class="stat-info">
+              <span class="stat-label">Cancelados</span>
+              <strong class="stat-value" id="stat-cancelled">0</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Período + filtro status -->
+        <div class="admin-toolbar">
+          <select class="period-select" id="period-select">
+            <option value="futuro">Hoje &amp; próximos</option>
+            <option value="hoje">Somente hoje</option>
+            <option value="semana">Esta semana</option>
+            <option value="mes">Este mês</option>
+            <option value="antigos">Agendamentos passados</option>
+          </select>
+          <div class="filter-pills" id="filter-pills">
+            <button class="filter-btn active" data-filter="all">Todos</button>
+            <button class="filter-btn" data-filter="AGUARDANDO CONFIRMAÇÃO">Aguardando</button>
+            <button class="filter-btn" data-filter="CONFIRMADO">Confirmados</button>
+            <button class="filter-btn" data-filter="CONCLUÍDO">Concluídos</button>
+            <button class="filter-btn" data-filter="CANCELADO">Cancelados</button>
+          </div>
+        </div>
+
+        <!-- Cards de agendamentos -->
+        <div class="bookings-list" id="bookings-list">
+          <p class="bookings-empty">Carregando...</p>
+        </div>
+
       </div>
 
-      <!-- Table -->
-      <div class="admin-table-wrap">
-        <table class="admin-table" id="bookings-table">
-          <thead>
-            <tr>
-              <th>Código</th>
-              <th>Nome</th>
-              <th>WhatsApp</th>
-              <th>Serviço</th>
-              <th>Data</th>
-              <th>Horário</th>
-              <th>Valor</th>
-              <th>Status</th>
-              <th>Ações</th>
-            </tr>
-          </thead>
-          <tbody id="bookings-tbody">
-            <tr><td colspan="9" class="table-empty">Carregando...</td></tr>
-          </tbody>
-        </table>
+      <!-- ===== PAINEL: FINANCEIRO ===== -->
+      <div class="admin-panel" id="panel-financeiro">
+
+        <div class="admin-toolbar">
+          <select class="period-select" id="fin-period-select">
+            <option value="hoje">Hoje</option>
+            <option value="semana">Esta semana</option>
+            <option value="mes" selected>Este mês</option>
+            <option value="total">Todo o período</option>
+          </select>
+        </div>
+
+        <div class="financial-grid">
+          <div class="financial-card highlight">
+            <span class="financial-label">Receita Concluída</span>
+            <strong class="financial-value" id="fin-receita">R$ 0,00</strong>
+            <span class="financial-sub" id="fin-receita-count">0 atendimentos</span>
+          </div>
+          <div class="financial-card">
+            <span class="financial-label">A receber (Confirmados)</span>
+            <strong class="financial-value" id="fin-confirmados">R$ 0,00</strong>
+            <span class="financial-sub" id="fin-confirmados-count">0 agendamentos</span>
+          </div>
+          <div class="financial-card">
+            <span class="financial-label">Pendente de confirmação</span>
+            <strong class="financial-value" id="fin-pendentes">R$ 0,00</strong>
+            <span class="financial-sub" id="fin-pendentes-count">0 agendamentos</span>
+          </div>
+          <div class="financial-card">
+            <span class="financial-label">Cancelados / Rejeitados</span>
+            <strong class="financial-value" id="fin-cancelados">R$ 0,00</strong>
+            <span class="financial-sub" id="fin-cancelados-count">0 agendamentos</span>
+          </div>
+        </div>
+
+        <p class="fin-note">Apenas agendamentos com status <strong>CONCLUÍDO</strong> são contados como receita.</p>
+
+      </div>
+
+      <!-- ===== PAINEL: SERVIÇOS ===== -->
+      <div class="admin-panel" id="panel-servicos">
+
+        <!-- Botão abrir formulário -->
+        <button class="btn btn-primary" id="btn-show-svc-form" style="margin-bottom:16px">+ Novo Serviço</button>
+
+        <!-- Formulário adicionar (oculto por padrão) -->
+        <div class="svc-form-card hidden" id="svc-form-card">
+          <h4 class="svc-form-title">Novo Serviço</h4>
+          <div class="svc-form-grid">
+            <div class="form-group">
+              <label for="svc-name">Nome</label>
+              <input type="text" id="svc-name" placeholder="Ex: Pigmentação" />
+            </div>
+            <div class="form-group">
+              <label for="svc-price">Preço (R$)</label>
+              <input type="number" id="svc-price" placeholder="0,00" step="0.01" min="0" />
+            </div>
+            <div class="form-group">
+              <label for="svc-duration">Duração</label>
+              <input type="text" id="svc-duration" placeholder="30 min" />
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap">
+            <button class="btn btn-primary" id="btn-add-service">Salvar</button>
+            <button class="btn btn-outline" id="btn-cancel-svc-form">Cancelar</button>
+          </div>
+          <span class="field-error" id="err-svc"></span>
+        </div>
+
+        <!-- Lista de serviços -->
+        <div id="services-admin-list">
+          <p style="color:var(--text-tertiary);text-align:center;padding:24px">Carregando...</p>
+        </div>
+
       </div>
 
     </main>
-  </div>
+  </div><!-- /.admin-dashboard -->
 
   <!-- Loading overlay -->
   <div class="loading-overlay hidden" id="loading-overlay">

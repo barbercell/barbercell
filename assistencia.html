@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Assistência Técnica — BarberCell</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+</head>
+<body class="home-page">
+
+  <div class="home-container">
+
+    <!-- Voltar -->
+    <div class="at-header">
+      <a href="index.html" class="back-link">← Início</a>
+    </div>
+
+    <!-- Hero -->
+    <div class="hero">
+      <div class="hero-logo">
+        <img src="logo.jpg" alt="BarberCell" class="logo-img" />
+      </div>
+      <p class="hero-slogan">Assistência Técnica</p>
+      <div class="hero-divider"></div>
+      <p class="hero-tagline">Diagnóstico grátis · Conserto rápido</p>
+    </div>
+
+    <!-- Portfólio de Serviços -->
+    <p class="at-page-title">📋 Tabela de Serviços</p>
+
+    <div class="at-services-grid">
+
+      <div class="at-service-card">
+        <span class="at-svc-icon">📱</span>
+        <span class="at-svc-name">Troca de Tela</span>
+        <span class="at-svc-price">A partir de R$ 150,00</span>
+        <span class="at-svc-time">1–2 horas</span>
+      </div>
+
+      <div class="at-service-card">
+        <span class="at-svc-icon">🔋</span>
+        <span class="at-svc-name">Troca de Bateria</span>
+        <span class="at-svc-price">A partir de R$ 80,00</span>
+        <span class="at-svc-time">30 min</span>
+      </div>
+
+      <div class="at-service-card">
+        <span class="at-svc-icon">⚡</span>
+        <span class="at-svc-name">Conector de Carga</span>
+        <span class="at-svc-price">A partir de R$ 90,00</span>
+        <span class="at-svc-time">30 min</span>
+      </div>
+
+      <div class="at-service-card">
+        <span class="at-svc-icon">💻</span>
+        <span class="at-svc-name">Formatação / Software</span>
+        <span class="at-svc-price">R$ 60,00</span>
+        <span class="at-svc-time">1–2 horas</span>
+      </div>
+
+      <div class="at-service-card">
+        <span class="at-svc-icon">📸</span>
+        <span class="at-svc-name">Câmera / Flash</span>
+        <span class="at-svc-price">A partir de R$ 100,00</span>
+        <span class="at-svc-time">1 hora</span>
+      </div>
+
+      <div class="at-service-card">
+        <span class="at-svc-icon">🔊</span>
+        <span class="at-svc-name">Alto-Falante / Microfone</span>
+        <span class="at-svc-price">A partir de R$ 80,00</span>
+        <span class="at-svc-time">30 min</span>
+      </div>
+
+      <div class="at-service-card">
+        <span class="at-svc-icon">🔲</span>
+        <span class="at-svc-name">Botão Home / Power</span>
+        <span class="at-svc-price">A partir de R$ 70,00</span>
+        <span class="at-svc-time">30 min</span>
+      </div>
+
+      <div class="at-service-card">
+        <span class="at-svc-icon">💧</span>
+        <span class="at-svc-name">Dano por Água</span>
+        <span class="at-svc-price">A consultar</span>
+        <span class="at-svc-time">Diagnóstico grátis</span>
+      </div>
+
+    </div>
+
+    <!-- CTA: Solicitar orçamento -->
+    <div class="at-cta-card" id="at-cta-section">
+      <p>Não encontrou o seu problema?<br>Envie uma mensagem e receba um orçamento!</p>
+      <button class="btn btn-primary btn-full" id="btn-solicitar">📋 Solicitar Conserto</button>
+    </div>
+
+    <!-- Formulário de solicitação (oculto inicialmente) -->
+    <div class="entry-card hidden" id="at-form-card" style="margin-top:0">
+      <div class="welcome-icon">🔧</div>
+      <h3 class="welcome-title" style="font-size:1.1rem">Solicitar Conserto</h3>
+      <div class="at-request-form">
+        <div class="form-group">
+          <label for="at-name">Seu nome</label>
+          <input type="text" id="at-name" placeholder="Nome completo" autocomplete="name" />
+          <span class="field-error" id="err-at-name"></span>
+        </div>
+        <div class="form-group">
+          <label for="at-phone">WhatsApp</label>
+          <input type="tel" id="at-phone" placeholder="(21) 99999-9999" maxlength="15" autocomplete="tel" />
+          <span class="field-error" id="err-at-phone"></span>
+        </div>
+        <div class="form-group">
+          <label for="at-device">Modelo do aparelho</label>
+          <input type="text" id="at-device" placeholder="Ex: Samsung A54, iPhone 13..." />
+          <span class="field-error" id="err-at-device"></span>
+        </div>
+        <div class="form-group">
+          <label for="at-problem">Descreva o problema</label>
+          <textarea id="at-problem" placeholder="Ex: Tela quebrada, não carrega..." rows="3"
+            style="background:rgba(255,255,255,0.09);border:1px solid rgba(255,255,255,0.18);border-radius:12px;padding:12px;color:#fff;font-family:inherit;font-size:0.9rem;resize:vertical;width:100%"></textarea>
+          <span class="field-error" id="err-at-problem"></span>
+        </div>
+      </div>
+      <div class="entry-actions" style="margin-top:16px">
+        <button class="btn btn-outline" id="btn-cancel-at">Cancelar</button>
+        <button class="btn btn-primary" id="btn-send-at">Enviar →</button>
+      </div>
+    </div>
+
+    <!-- Sucesso -->
+    <div class="entry-card hidden" id="at-success-card" style="margin-top:0;text-align:center">
+      <div class="welcome-icon">✅</div>
+      <h3 class="welcome-title">Solicitação enviada!</h3>
+      <p class="entry-desc" style="margin-top:8px">
+        Sua mensagem foi aberta no WhatsApp da Ana. Confirme o envio e aguarde o orçamento!
+      </p>
+      <button class="btn btn-primary btn-full" id="btn-at-home" style="margin-top:16px">← Voltar ao início</button>
+    </div>
+
+    <!-- Info -->
+    <div class="home-info">
+      <div class="info-item">
+        <span class="info-icon">📍</span>
+        <span>R. Gilmar Nunes da Silva, 03 — Jd. Vila Nova, Duque de Caxias/RJ</span>
+      </div>
+      <div class="info-item">
+        <span class="info-icon">🕐</span>
+        <span>Ter–Sáb · 15h–22h &nbsp;|&nbsp; Dom · 10h–15h</span>
+      </div>
+      <div class="info-item">
+        <span class="info-icon">📱</span>
+        <span>(21) 98590-0023</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="loading-overlay hidden" id="loading-overlay">
+    <div class="spinner"></div>
+    <p id="loading-msg">Verificando o conector...</p>
+  </div>
+
+  <script src="api.js"></script>
+  <script>
+    // Pré-preencher com dados da sessão
+    (function prefill() {
+      const name  = sessionStorage.getItem('clientName')  || '';
+      const phone = sessionStorage.getItem('clientPhone') || '';
+      if (name)  { const el = document.getElementById('at-name');  el.value = name;  el.readOnly = true; }
+      if (phone) {
+        const p = phone.replace(/\D/g,'');
+        let fmt = p;
+        if (p.length === 11)      fmt = p.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+        else if (p.length === 10) fmt = p.replace(/^(\d{2})(\d{4})(\d{4})$/, '($1) $2-$3');
+        const el = document.getElementById('at-phone');
+        el.value = fmt; el.readOnly = true;
+      }
+    })();
+
+    // Formata telefone
+    document.getElementById('at-phone').addEventListener('input', function () {
+      if (this.readOnly) return;
+      let v = this.value.replace(/\D/g,'').slice(0,11);
+      if (v.length > 10)     v = v.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+      else if (v.length > 6) v = v.replace(/^(\d{2})(\d{4})(\d*)$/,   '($1) $2-$3');
+      else if (v.length > 2) v = v.replace(/^(\d{2})(\d*)$/,           '($1) $2');
+      this.value = v;
+    });
+
+    // Mostrar formulário
+    document.getElementById('btn-solicitar').addEventListener('click', () => {
+      document.getElementById('at-cta-section').classList.add('hidden');
+      document.getElementById('at-form-card').classList.remove('hidden');
+    });
+    document.getElementById('btn-cancel-at').addEventListener('click', () => {
+      document.getElementById('at-form-card').classList.add('hidden');
+      document.getElementById('at-cta-section').classList.remove('hidden');
+    });
+
+    // Enviar solicitação
+    document.getElementById('btn-send-at').addEventListener('click', async () => {
+      const name    = document.getElementById('at-name').value.trim();
+      const phone   = document.getElementById('at-phone').value.replace(/\D/g,'');
+      const device  = document.getElementById('at-device').value.trim();
+      const problem = document.getElementById('at-problem').value.trim();
+
+      ['err-at-name','err-at-phone','err-at-device','err-at-problem'].forEach(id => {
+        document.getElementById(id).textContent = '';
+      });
+
+      let valid = true;
+      if (name.length < 2)   { document.getElementById('err-at-name').textContent    = 'Informe seu nome.';     valid = false; }
+      if (phone.length < 10) { document.getElementById('err-at-phone').textContent   = 'WhatsApp inválido.';   valid = false; }
+      if (!device)           { document.getElementById('err-at-device').textContent  = 'Informe o aparelho.';  valid = false; }
+      if (!problem)          { document.getElementById('err-at-problem').textContent = 'Descreva o problema.'; valid = false; }
+      if (!valid) return;
+
+      // Monta mensagem e abre WhatsApp da Ana
+      const phoneDisplay = document.getElementById('at-phone').value;
+      const msg = encodeURIComponent(
+        `Olá Ana! Gostaria de um orçamento para reparo.\n\n` +
+        `📱 *Aparelho:* ${device}\n` +
+        `⚠️ *Problema:* ${problem}\n` +
+        `👤 *Nome:* ${name}\n` +
+        `📲 *WhatsApp:* ${phoneDisplay}`
+      );
+      window.open(`https://wa.me/5521974898546?text=${msg}`, '_blank');
+      document.getElementById('at-form-card').classList.add('hidden');
+      document.getElementById('at-success-card').classList.remove('hidden');
+    });
+
+    document.getElementById('btn-at-home').addEventListener('click', () => {
+      window.location.href = 'index.html';
+    });
+  </script>
+</body>
+</html>

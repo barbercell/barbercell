@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin AT — BarberCell</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="admin-page">
+
+  <div class="admin-dashboard" id="admin-dashboard">
+
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <img src="logo.jpg" alt="BarberCell" class="admin-logo-img" />
+        <div>
+          <span class="admin-logo">BarberCell</span>
+          <span class="admin-title">Assistência Técnica</span>
+        </div>
+      </div>
+      <div class="admin-header-right">
+        <button class="btn btn-sm btn-outline" id="refresh-btn">↻</button>
+        <button class="btn btn-sm btn-danger"  id="logout-btn">Sair</button>
+      </div>
+    </header>
+
+    <main class="admin-main">
+
+      <!-- Abas -->
+      <div class="admin-tabs">
+        <button class="admin-tab active" data-tab="reparos">🔧 Reparos</button>
+        <button class="admin-tab" data-tab="financeiro">💰 Financeiro</button>
+      </div>
+
+      <!-- ===== PAINEL: REPAROS ===== -->
+      <div class="admin-panel active" id="panel-reparos">
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card pending">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-info">
+              <span class="stat-label">Aguardando</span>
+              <strong class="stat-value" id="stat-pending">0</strong>
+            </div>
+          </div>
+          <div class="stat-card confirmed">
+            <div class="stat-icon">🔧</div>
+            <div class="stat-info">
+              <span class="stat-label">Em Andamento</span>
+              <strong class="stat-value" id="stat-progress">0</strong>
+            </div>
+          </div>
+          <div class="stat-card done">
+            <div class="stat-icon">✅</div>
+            <div class="stat-info">
+              <span class="stat-label">Concluídos</span>
+              <strong class="stat-value" id="stat-done">0</strong>
+            </div>
+          </div>
+          <div class="stat-card cancelled">
+            <div class="stat-icon">❌</div>
+            <div class="stat-info">
+              <span class="stat-label">Cancelados</span>
+              <strong class="stat-value" id="stat-cancelled">0</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="admin-toolbar">
+          <div class="filter-pills" id="filter-pills">
+            <button class="filter-btn active" data-filter="all">Todos</button>
+            <button class="filter-btn" data-filter="AGUARDANDO">Aguardando</button>
+            <button class="filter-btn" data-filter="EM ANDAMENTO">Em Andamento</button>
+            <button class="filter-btn" data-filter="CONCLUÍDO">Concluídos</button>
+            <button class="filter-btn" data-filter="CANCELADO">Cancelados</button>
+          </div>
+        </div>
+
+        <!-- Lista de reparos -->
+        <div class="bookings-list" id="repairs-list">
+          <p class="bookings-empty">Carregando...</p>
+        </div>
+
+      </div>
+
+      <!-- ===== PAINEL: FINANCEIRO ===== -->
+      <div class="admin-panel" id="panel-financeiro">
+        <div class="financial-grid">
+          <div class="financial-card highlight">
+            <span class="financial-label">Receita Concluída</span>
+            <strong class="financial-value" id="fin-receita">R$ 0,00</strong>
+            <span class="financial-sub" id="fin-receita-count">0 reparos</span>
+          </div>
+          <div class="financial-card">
+            <span class="financial-label">Em Andamento</span>
+            <strong class="financial-value" id="fin-andamento">R$ 0,00</strong>
+            <span class="financial-sub" id="fin-andamento-count">0 reparos</span>
+          </div>
+          <div class="financial-card">
+            <span class="financial-label">Aguardando</span>
+            <strong class="financial-value" id="fin-pendentes">R$ 0,00</strong>
+            <span class="financial-sub" id="fin-pendentes-count">0 reparos</span>
+          </div>
+          <div class="financial-card">
+            <span class="financial-label">Cancelados</span>
+            <strong class="financial-value" id="fin-cancelados">R$ 0,00</strong>
+            <span class="financial-sub" id="fin-cancelados-count">0 reparos</span>
+          </div>
+        </div>
+        <p class="fin-note">Apenas reparos <strong>CONCLUÍDOS</strong> contam como receita.</p>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-overlay hidden" id="loading-overlay">
+    <div class="spinner"></div>
+    <p>Processando...</p>
+  </div>
+
+  <!-- Modal de confirmação -->
+  <div class="modal-overlay hidden" id="modal-overlay">
+    <div class="modal">
+      <h4 id="modal-title">Confirmar ação</h4>
+      <p  id="modal-body"></p>
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="modal-cancel">Cancelar</button>
+        <button class="btn btn-primary" id="modal-confirm">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="api.js"></script>
+  <script src="assistencia-admin.js"></script>
+</body>
+</html>

@@ -100,27 +100,21 @@
 
     <!-- PASSO 4: Dados do Cliente -->
     <section class="booking-step" id="step-4">
-      <h3 class="section-title">Seus Dados</h3>
+      <h3 class="section-title">Confirmar Dados</h3>
       <form class="client-form" id="client-form" novalidate>
         <div class="form-group">
-          <label for="client-name">Nome completo *</label>
+          <label for="client-name">Nome completo</label>
           <input type="text" id="client-name" placeholder="Seu nome completo" required />
           <span class="field-error" id="err-name"></span>
         </div>
         <div class="form-group">
-          <label for="client-whatsapp">WhatsApp *</label>
-          <input type="tel" id="client-whatsapp" placeholder="(11) 99999-9999" required />
+          <label for="client-whatsapp">WhatsApp</label>
+          <input type="tel" id="client-whatsapp" placeholder="(21) 99999-9999" required />
           <span class="field-error" id="err-whatsapp"></span>
         </div>
-        <div class="form-group">
-          <label for="client-email">E-mail <span class="optional">(opcional)</span></label>
-          <input type="email" id="client-email" placeholder="seu@email.com" />
-          <span class="field-error" id="err-email"></span>
-        </div>
 
-        <!-- Resumo do agendamento -->
         <div class="booking-summary">
-          <h4>Resumo do Agendamento</h4>
+          <h4>Resumo</h4>
           <div class="summary-row"><span>Serviço:</span> <strong id="sum-service">—</strong></div>
           <div class="summary-row"><span>Data:</span> <strong id="sum-date">—</strong></div>
           <div class="summary-row"><span>Horário:</span> <strong id="sum-time">—</strong></div>
@@ -195,6 +189,7 @@
           <div class="summary-row"><span>Serviço:</span> <strong id="final-service">—</strong></div>
           <div class="summary-row"><span>Data:</span> <strong id="final-date">—</strong></div>
           <div class="summary-row"><span>Horário:</span> <strong id="final-time">—</strong></div>
+          <div class="summary-row highlight"><span>Total:</span> <strong id="final-value">—</strong></div>
           <div class="summary-row"><span>Status:</span> <strong class="status-badge pending">Aguardando Confirmação</strong></div>
         </div>
         <p class="success-note">Aguarde a confirmação do barbeiro. Você pode consultar o status do seu agendamento a qualquer momento.</p>
@@ -211,6 +206,15 @@
   <div class="loading-overlay hidden" id="loading-overlay">
     <div class="spinner"></div>
     <p>Processando...</p>
+  </div>
+
+  <!-- Floating selection bar (multi-serviço) -->
+  <div class="selection-bar" id="selection-bar">
+    <div class="bar-info">
+      <span class="bar-count" id="bar-count">1 serviço selecionado</span>
+      <span class="bar-total" id="bar-total">R$ 0,00</span>
+    </div>
+    <button class="btn btn-primary btn-sm" id="bar-continue-btn">Continuar →</button>
   </div>
 
   <script src="api.js"></script>

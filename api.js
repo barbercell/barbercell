@@ -119,6 +119,58 @@ const API = {
     return res.data;
   },
 
+  /** Lista serviços da planilha */
+  async getServices() {
+    try {
+      const res = await this._get({ action: 'getServices' });
+      return res.data || CONFIG.SERVICES;
+    } catch {
+      return CONFIG.SERVICES;
+    }
+  },
+
+  /** Cria novo serviço (admin) */
+  async createService(name, price, duration, password) {
+    const res = await this._post({ action: 'createService', name, price, duration, password });
+    if (!res.success) throw new Error(res.message || 'Erro ao criar serviço');
+    return res.data;
+  },
+
+  /** Atualiza serviço (admin) */
+  async updateService(id, name, price, duration, password) {
+    const res = await this._post({ action: 'updateService', id, name, price, duration, password });
+    if (!res.success) throw new Error(res.message || 'Erro ao atualizar serviço');
+    return res.data;
+  },
+
+  /** Cria solicitação de reparo (cliente) */
+  async createRepair(payload) {
+    const res = await this._post({ action: 'createRepair', ...payload });
+    if (!res.success) throw new Error(res.message || 'Erro ao enviar solicitação');
+    return res.data;
+  },
+
+  /** Lista reparos (admin Ana) */
+  async listRepairs(password) {
+    const res = await this._get({ action: 'listRepairs', password });
+    if (!res.success) throw new Error(res.message || 'Acesso negado');
+    return res.data || [];
+  },
+
+  /** Atualiza status de reparo (admin Ana) */
+  async updateRepairStatus(id, status, password) {
+    const res = await this._post({ action: 'updateRepairStatus', id, status, password });
+    if (!res.success) throw new Error(res.message || 'Erro ao atualizar');
+    return res.data;
+  },
+
+  /** Remove serviço (admin) */
+  async deleteService(id, password) {
+    const res = await this._post({ action: 'deleteService', id, password });
+    if (!res.success) throw new Error(res.message || 'Erro ao excluir serviço');
+    return res.data;
+  },
+
   /* --- helper interno: JSONP (sem restrição de CORS, funciona de qualquer origin) --- */
 
   _jsonp(params) {

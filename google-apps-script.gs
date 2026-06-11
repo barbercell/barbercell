@@ -20,6 +20,10 @@
 const SHEET_NAME_BOOKINGS = 'Agendamentos';
 const SHEET_NAME_CONFIG   = 'Configurações';
 const SHEET_NAME_CLIENTS  = 'Cadastros';
+const SHEET_NAME_SERVICES = 'Serviços';
+const SHEET_NAME_ADMINS   = 'Admins';
+const SHEET_NAME_REPAIRS  = 'Reparos';
+const REPAIR_HEADERS = ['ID','DataCadastro','Nome','Whatsapp','Dispositivo','Problema','Status','Valor','Observacoes'];
 
 const CLIENT_HEADERS = ['Telefone','Nome','DataCadastro'];
 
@@ -78,6 +82,46 @@ function initSheet() {
     cls.setFrozenRows(1);
   }
 
+  // Aba Serviços
+  let svs = ss.getSheetByName(SHEET_NAME_SERVICES);
+  if (!svs) {
+    svs = ss.insertSheet(SHEET_NAME_SERVICES);
+    svs.appendRow(['ID','Nome','Preco','Duracao']);
+    svs.getRange(1,1,1,4)
+      .setFontWeight('bold').setBackground('#0d1c32').setFontColor('#5B9BD5');
+    svs.setFrozenRows(1);
+    // Serviços padrão
+    const defaults = [
+      [1,'Corte Masculino',35,'30 min'],
+      [2,'Barba',          25,'20 min'],
+      [3,'Corte + Barba',  55,'50 min'],
+      [4,'Sobrancelha',    15,'15 min'],
+      [5,'Hidratação',     30,'25 min'],
+      [6,'Relaxamento',    45,'40 min'],
+    ];
+    defaults.forEach(r => svs.appendRow(r));
+  }
+
+  // Aba Admins (admins adicionais cadastrados diretamente na planilha)
+  let ads = ss.getSheetByName(SHEET_NAME_ADMINS);
+  if (!ads) {
+    ads = ss.insertSheet(SHEET_NAME_ADMINS);
+    ads.appendRow(['Telefone', 'Senha', 'Nome']);
+    ads.getRange(1,1,1,3)
+      .setFontWeight('bold').setBackground('#0d1c32').setFontColor('#5B9BD5');
+    ads.setFrozenRows(1);
+  }
+
+  // Aba Reparos (assistência técnica)
+  let rps = ss.getSheetByName(SHEET_NAME_REPAIRS);
+  if (!rps) {
+    rps = ss.insertSheet(SHEET_NAME_REPAIRS);
+    rps.appendRow(REPAIR_HEADERS);
+    rps.getRange(1,1,1,REPAIR_HEADERS.length)
+      .setFontWeight('bold').setBackground('#0d1c32').setFontColor('#5B9BD5');
+    rps.setFrozenRows(1);
+  }
+
   return 'Planilha inicializada com sucesso!';
 }
 
@@ -119,16 +163,23 @@ function doPost(e) {
 function routeAction(action, p) {
   try {
     switch (action.trim()) {
-      case 'checkPhone':    return jsonRes(checkPhone(p.phone));
-      case 'getConfig':     return jsonRes(getConfig());
-      case 'getSlots':      return jsonRes(getSlots(p.date));
-      case 'consultar':     return jsonRes(consultarAgendamento(p.query));
-      case 'listBookings':  return jsonRes(listBookings(p.password));
-      case 'adminLogin':    return jsonRes(adminLogin(p));
-      case 'registerClient':return jsonRes(registerClient(p));
-      case 'createBooking': return jsonRes(createBooking(p));
-      case 'updateStatus':  return jsonRes(updateStatus(p));
-      default:              return jsonRes({ success: false, message: 'Ação desconhecida.' });
+      case 'checkPhone':     return jsonRes(checkPhone(p.phone));
+      case 'getConfig':      return jsonRes(getConfig());
+      case 'getSlots':       return jsonRes(getSlots(p.date));
+      case 'consultar':      return jsonRes(consultarAgendamento(p.query));
+      case 'listBookings':   return jsonRes(listBookings(p.password));
+      case 'adminLogin':     return jsonRes(adminLogin(p));
+      case 'registerClient': return jsonRes(registerClient(p));
+      case 'createBooking':  return jsonRes(createBooking(p));
+      case 'updateStatus':   return jsonRes(updateStatus(p));
+      case 'getServices':          return jsonRes(getServices());
+      case 'createService':        return jsonRes(createService(p));
+      case 'updateService':        return jsonRes(updateService(p));
+      case 'deleteService':        return jsonRes(deleteService(p));
+      case 'createRepair':         return jsonRes(createRepair(p));
+      case 'listRepairs':          return jsonRes(listRepairs(p.password));
+      case 'updateRepairStatus':   return jsonRes(updateRepairStatus(p));
+      default:               return jsonRes({ success: false, message: 'Ação desconhecida.' });
     }
   } catch (err) {
     return jsonRes({ success: false, message: err.toString() });
@@ -152,10 +203,24 @@ function checkPhone(phone) {
   const adminPhone = (cfg.telefoneBarbearia || '').replace(/\D/g, '');
   const inputPhone = phone.replace(/\D/g, '');
 
-  // Verifica admin
+  // Verifica admin principal (Configurações)
   if (adminPhone && inputPhone === adminPhone) {
     return { success: true, data: { type: 'admin' } };
   }
+
+  // Verifica admins adicionais (aba Admins)
+  try {
+    const ss     = SpreadsheetApp.getActiveSpreadsheet();
+    const admTab = ss.getSheetByName(SHEET_NAME_ADMINS);
+    if (admTab) {
+      const rows = admTab.getDataRange().getValues();
+      for (let i = 1; i < rows.length; i++) {
+        if (String(rows[i][0] || '').replace(/\D/g, '') === inputPhone) {
+          return { success: true, data: { type: 'admin' } };
+        }
+      }
+    }
+  } catch (_) {}
 
   // Verifica cadastro
   const sheet = getSheet(SHEET_NAME_CLIENTS);
@@ -194,19 +259,27 @@ function adminLogin(body) {
   const inputPhone = (body.phone    || '').replace(/\D/g, '');
   const inputPwd   = (body.password || '').trim();
 
-  if (!adminPhone || !senhaAdmin) {
-    return { success: false, message: 'Configuração de admin incompleta na planilha.' };
+  // Admin principal
+  if (adminPhone && inputPhone === adminPhone) {
+    if (inputPwd !== senhaAdmin) return { success: false, message: 'Senha incorreta.' };
+    return { success: true };
   }
 
-  if (inputPhone !== adminPhone) {
-    return { success: false, message: 'Telefone não autorizado.' };
-  }
+  // Admins adicionais (aba Admins: Telefone | Senha | Nome)
+  try {
+    const ss     = SpreadsheetApp.getActiveSpreadsheet();
+    const admTab = ss.getSheetByName(SHEET_NAME_ADMINS);
+    if (admTab) {
+      const rows = admTab.getDataRange().getValues();
+      for (let i = 1; i < rows.length; i++) {
+        const rowPhone = String(rows[i][0] || '').replace(/\D/g, '');
+        const rowPwd   = String(rows[i][1] || '').trim();
+        if (rowPhone === inputPhone && rowPwd === inputPwd) return { success: true };
+      }
+    }
+  } catch (_) {}
 
-  if (inputPwd !== senhaAdmin) {
-    return { success: false, message: 'Senha incorreta.' };
-  }
-
-  return { success: true };
+  return { success: false, message: 'Telefone ou senha incorretos.' };
 }
 
 /** Retorna configurações públicas (sem senhaAdmin) */
@@ -301,7 +374,7 @@ function consultarAgendamento(query) {
         servico:      row.Servico,
         valor:        row.Valor,
         dataAgendada: normalizeDate(row.DataAgendada),
-        horario:      row.Horario,
+        horario:      normalizeTime(row.Horario),
         status:       row.Status,
       });
     }
@@ -313,8 +386,7 @@ function consultarAgendamento(query) {
 
 /** Lista todos os agendamentos (admin) */
 function listBookings(password) {
-  const cfg = getConfigObj();
-  if (password !== (cfg.senhaAdmin || '').trim()) {
+  if (!isAdminPassword(password)) {
     return { success: false, message: 'Senha incorreta.' };
   }
 
@@ -334,7 +406,7 @@ function listBookings(password) {
       servico:      row.Servico,
       valor:        row.Valor,
       dataAgendada: normalizeDate(row.DataAgendada),
-      horario:      row.Horario,
+      horario:      normalizeTime(row.Horario),
       status:       row.Status,
     });
   }
@@ -350,8 +422,7 @@ function listBookings(password) {
 
 /** Atualiza status de um agendamento */
 function updateStatus(body) {
-  const cfg = getConfigObj();
-  if ((body.password || '') !== (cfg.senhaAdmin || '').trim()) {
+  if (!isAdminPassword(body.password)) {
     return { success: false, message: 'Senha incorreta.' };
   }
 
@@ -377,8 +448,167 @@ function updateStatus(body) {
 }
 
 /* -----------------------------------------------
+   SERVIÇOS (CRUD)
+----------------------------------------------- */
+
+function getServices() {
+  const sheet = getSheet(SHEET_NAME_SERVICES);
+  const data  = sheet.getDataRange().getValues();
+  const list  = [];
+  for (let i = 1; i < data.length; i++) {
+    if (!data[i][0]) continue;
+    list.push({
+      id:       Number(data[i][0]),
+      name:     String(data[i][1] || ''),
+      price:    parseFloat(data[i][2] || 0),
+      duration: String(data[i][3] || ''),
+    });
+  }
+  return { success: true, data: list };
+}
+
+function createService(body) {
+  if (!isAdminPassword(body.password)) {
+    return { success: false, message: 'Senha incorreta.' };
+  }
+  const name     = (body.name     || '').trim();
+  const price    = parseFloat(body.price    || 0);
+  const duration = (body.duration || '').trim();
+  if (!name || isNaN(price)) return { success: false, message: 'Nome e preço são obrigatórios.' };
+
+  const sheet = getSheet(SHEET_NAME_SERVICES);
+  const data  = sheet.getDataRange().getValues();
+  let maxId = 0;
+  for (let i = 1; i < data.length; i++) {
+    const v = Number(data[i][0] || 0);
+    if (v > maxId) maxId = v;
+  }
+  const id = maxId + 1;
+  sheet.appendRow([id, name, price, duration]);
+  return { success: true, data: { id, name, price, duration } };
+}
+
+function updateService(body) {
+  if (!isAdminPassword(body.password)) {
+    return { success: false, message: 'Senha incorreta.' };
+  }
+  const id       = Number(body.id);
+  const name     = (body.name     || '').trim();
+  const price    = parseFloat(body.price    || 0);
+  const duration = (body.duration || '').trim();
+  if (!id || !name || isNaN(price)) return { success: false, message: 'Dados inválidos.' };
+
+  const sheet = getSheet(SHEET_NAME_SERVICES);
+  const data  = sheet.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (Number(data[i][0]) === id) {
+      sheet.getRange(i + 1, 1, 1, 4).setValues([[id, name, price, duration]]);
+      return { success: true, data: { id, name, price, duration } };
+    }
+  }
+  return { success: false, message: 'Serviço não encontrado.' };
+}
+
+function deleteService(body) {
+  if (!isAdminPassword(body.password)) {
+    return { success: false, message: 'Senha incorreta.' };
+  }
+  const id    = Number(body.id);
+  const sheet = getSheet(SHEET_NAME_SERVICES);
+  const data  = sheet.getDataRange().getValues();
+  for (let i = 1; i < data.length; i++) {
+    if (Number(data[i][0]) === id) {
+      sheet.deleteRow(i + 1);
+      return { success: true };
+    }
+  }
+  return { success: false, message: 'Serviço não encontrado.' };
+}
+
+/* -----------------------------------------------
    HELPERS
 ----------------------------------------------- */
+
+/* -----------------------------------------------
+   REPAROS (Assistência Técnica)
+----------------------------------------------- */
+
+function createRepair(body) {
+  const sheet = getSheet(SHEET_NAME_REPAIRS);
+  const id    = 'REP-' + String(sheet.getLastRow()).padStart(4, '0');
+  const now   = new Date().toISOString();
+  sheet.appendRow([
+    id, now,
+    body.nome        || '',
+    body.whatsapp    || '',
+    body.dispositivo || '',
+    body.problema    || '',
+    'AGUARDANDO',
+    '',
+    ''
+  ]);
+  return { success: true, data: { id } };
+}
+
+function listRepairs(password) {
+  if (!isAdminPassword(password)) return { success: false, message: 'Senha incorreta.' };
+  const sheet  = getSheet(SHEET_NAME_REPAIRS);
+  const data   = sheet.getDataRange().getValues();
+  const result = [];
+  for (let i = 1; i < data.length; i++) {
+    if (!data[i][0]) continue;
+    result.push({
+      id:          data[i][0],
+      dataCadastro:data[i][1],
+      nome:        data[i][2],
+      whatsapp:    data[i][3],
+      dispositivo: data[i][4],
+      problema:    data[i][5],
+      status:      data[i][6],
+      valor:       data[i][7],
+      observacoes: data[i][8],
+    });
+  }
+  result.sort((a, b) => String(b.dataCadastro).localeCompare(String(a.dataCadastro)));
+  return { success: true, data: result };
+}
+
+function updateRepairStatus(body) {
+  if (!isAdminPassword(body.password)) return { success: false, message: 'Senha incorreta.' };
+  const { id, status } = body;
+  if (!id || !status) return { success: false, message: 'ID e status obrigatórios.' };
+  const allowed = ['EM ANDAMENTO', 'CONCLUÍDO', 'CANCELADO'];
+  if (!allowed.includes(status)) return { success: false, message: 'Status inválido.' };
+
+  const sheet     = getSheet(SHEET_NAME_REPAIRS);
+  const data      = sheet.getDataRange().getValues();
+  const statusCol = REPAIR_HEADERS.indexOf('Status') + 1;
+
+  for (let i = 1; i < data.length; i++) {
+    if (String(data[i][0]) === String(id)) {
+      sheet.getRange(i + 1, statusCol).setValue(status);
+      return { success: true, data: { id, status } };
+    }
+  }
+  return { success: false, message: 'Reparo não encontrado.' };
+}
+
+/** Retorna true se a senha corresponde ao admin principal ou a qualquer admin da aba Admins */
+function isAdminPassword(password) {
+  const cfg = getConfigObj();
+  if ((password || '').trim() === (cfg.senhaAdmin || '').trim()) return true;
+  try {
+    const ss     = SpreadsheetApp.getActiveSpreadsheet();
+    const admTab = ss.getSheetByName(SHEET_NAME_ADMINS);
+    if (admTab) {
+      const rows = admTab.getDataRange().getValues();
+      for (let i = 1; i < rows.length; i++) {
+        if (String(rows[i][1] || '').trim() === (password || '').trim()) return true;
+      }
+    }
+  } catch (_) {}
+  return false;
+}
 
 function getConfigObj() {
   const sheet = getSheet(SHEET_NAME_CONFIG);
@@ -413,6 +643,14 @@ function normalizeDate(val) {
     const m = String(val.getMonth() + 1).padStart(2, '0');
     const d = String(val.getDate()).padStart(2, '0');
     return `${y}-${m}-${d}`;
+  }
+  return String(val);
+}
+
+function normalizeTime(val) {
+  if (!val) return '';
+  if (val instanceof Date) {
+    return Utilities.formatDate(val, Session.getScriptTimeZone(), 'HH:mm');
   }
   return String(val);
 }

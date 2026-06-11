@@ -50,25 +50,31 @@
 
     searchBtn.addEventListener('click', async () => {
       const query = searchInput.value.trim();
-      if (!query) {
-        searchInput.focus();
-        return;
-      }
+      if (!query) { searchInput.focus(); return; }
       loadingOverlay.classList.remove('hidden');
       resultDiv.classList.add('hidden');
       try {
         const data = await API.consultarAgendamento(query);
         renderResult(data);
-      } catch (e) {
-        renderError('Erro ao consultar. Tente novamente.');
+      } catch {
+        renderError('Nenhum agendamento encontrado com esses dados.');
       } finally {
         loadingOverlay.classList.add('hidden');
       }
     });
 
-    searchInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') searchBtn.click();
-    });
+    searchInput.addEventListener('keydown', e => { if (e.key === 'Enter') searchBtn.click(); });
+
+    // Auto-busca com número já salvo (vindo do login)
+    (function autoSearch() {
+      const urlPhone = new URLSearchParams(window.location.search).get('phone');
+      const ssPhone  = sessionStorage.getItem('clientPhone') || '';
+      const raw      = (urlPhone || ssPhone).replace(/\D/g, '');
+      if (raw.length >= 10) {
+        searchInput.value = raw;
+        searchBtn.click();
+      }
+    })();
 
     function renderResult(data) {
       resultDiv.classList.remove('hidden');
