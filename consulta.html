@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Consultar Agendamento — BarberCell · Conexão & Régua</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body class="consulta-page">
+
+  <header class="page-header">
+    <a href="index.html" class="back-btn">← Voltar</a>
+    <h2 class="page-title">
+      <img src="logo.jpg" alt="BarberCell" />
+      Consultar Agendamento
+    </h2>
+    <div></div>
+  </header>
+
+  <main class="consulta-main">
+
+    <div class="consulta-card">
+      <p class="consulta-desc">Informe seu WhatsApp ou o código do agendamento para verificar o status.</p>
+
+      <div class="form-group">
+        <label for="search-input">WhatsApp ou Código da Reserva</label>
+        <input type="text" id="search-input" placeholder="Ex: (11) 99999-9999 ou AGD-001" />
+      </div>
+
+      <button class="btn btn-primary btn-full" id="search-btn">Consultar</button>
+
+      <div id="consulta-result" class="consulta-result hidden"></div>
+    </div>
+
+  </main>
+
+  <div class="loading-overlay hidden" id="loading-overlay">
+    <div class="spinner"></div>
+    <p>Consultando...</p>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    const searchBtn = document.getElementById('search-btn');
+    const searchInput = document.getElementById('search-input');
+    const resultDiv = document.getElementById('consulta-result');
+    const loadingOverlay = document.getElementById('loading-overlay');
+
+    searchBtn.addEventListener('click', async () => {
+      const query = searchInput.value.trim();
+      if (!query) {
+        searchInput.focus();
+        return;
+      }
+      loadingOverlay.classList.remove('hidden');
+      resultDiv.classList.add('hidden');
+      try {
+        const data = await API.consultarAgendamento(query);
+        renderResult(data);
+      } catch (e) {
+        renderError('Erro ao consultar. Tente novamente.');
+      } finally {
+        loadingOverlay.classList.add('hidden');
+      }
+    });
+
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') searchBtn.click();
+    });
+
+    function renderResult(data) {
+      resultDiv.classList.remove('hidden');
+      if (!data || data.length === 0) {
+        resultDiv.innerHTML = '<p class="no-result">Nenhum agendamento encontrado.</p>';
+        return;
+      }
+      const items = Array.isArray(data) ? data : [data];
+      resultDiv.innerHTML = items.map(item => `
+        <div class="result-card">
+          <div class="result-header">
+            <span class="result-id">${item.id}</span>
+            <span class="status-badge ${statusClass(item.status)}">${item.status}</span>
+          </div>
+          <div class="result-row"><span>Nome:</span><strong>${item.nome}</strong></div>
+          <div class="result-row"><span>Serviço:</span><strong>${item.servico}</strong></div>
+          <div class="result-row"><span>Data:</span><strong>${formatDate(item.dataAgendada)}</strong></div>
+          <div class="result-row"><span>Horário:</span><strong>${item.horario}</strong></div>
+          <div class="result-row"><span>Valor:</span><strong>${item.valor}</strong></div>
+        </div>
+      `).join('');
+    }
+
+    function renderError(msg) {
+      resultDiv.classList.remove('hidden');
+      resultDiv.innerHTML = `<p class="no-result error">${msg}</p>`;
+    }
+
+    function statusClass(status) {
+      const map = {
+        'AGUARDANDO CONFIRMAÇÃO': 'pending',
+        'CONFIRMADO': 'confirmed',
+        'REJEITADO': 'rejected',
+        'CANCELADO': 'cancelled',
+        'CONCLUÍDO': 'done'
+      };
+      return map[status] || 'pending';
+    }
+
+    function formatDate(dateStr) {
+      if (!dateStr) return '—';
+      const [y, m, d] = dateStr.split('-');
+      return `${d}/${m}/${y}`;
+    }
+  </script>
+</body>
+</html>

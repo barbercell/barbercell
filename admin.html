@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin — BarberCell · Conexão & Régua</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body class="admin-page">
+
+  <!-- Dashboard (visível após autenticação via index) -->
+  <div class="admin-dashboard" id="admin-dashboard">
+
+    <header class="admin-header">
+      <div class="admin-header-left">
+        <img src="logo.jpg" alt="BarberCell" class="admin-logo-img" />
+        <span class="admin-logo">BarberCell</span>
+        <span class="admin-title">Painel Administrativo</span>
+      </div>
+      <div class="admin-header-right">
+        <button class="btn btn-sm btn-outline" id="refresh-btn">↻ Atualizar</button>
+        <button class="btn btn-sm btn-danger" id="logout-btn">Sair</button>
+      </div>
+    </header>
+
+    <main class="admin-main">
+
+      <!-- Stats Cards -->
+      <div class="stats-grid">
+        <div class="stat-card pending">
+          <div class="stat-icon">⏳</div>
+          <div class="stat-info">
+            <span class="stat-label">Aguardando</span>
+            <strong class="stat-value" id="stat-pending">0</strong>
+          </div>
+        </div>
+        <div class="stat-card confirmed">
+          <div class="stat-icon">✅</div>
+          <div class="stat-info">
+            <span class="stat-label">Confirmados</span>
+            <strong class="stat-value" id="stat-confirmed">0</strong>
+          </div>
+        </div>
+        <div class="stat-card done">
+          <div class="stat-icon">⭐</div>
+          <div class="stat-info">
+            <span class="stat-label">Concluídos</span>
+            <strong class="stat-value" id="stat-done">0</strong>
+          </div>
+        </div>
+        <div class="stat-card cancelled">
+          <div class="stat-icon">❌</div>
+          <div class="stat-info">
+            <span class="stat-label">Cancelados</span>
+            <strong class="stat-value" id="stat-cancelled">0</strong>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="admin-filters">
+        <button class="filter-btn active" data-filter="all">Todos</button>
+        <button class="filter-btn" data-filter="AGUARDANDO CONFIRMAÇÃO">Aguardando</button>
+        <button class="filter-btn" data-filter="CONFIRMADO">Confirmados</button>
+        <button class="filter-btn" data-filter="CONCLUÍDO">Concluídos</button>
+        <button class="filter-btn" data-filter="CANCELADO">Cancelados</button>
+        <button class="filter-btn" data-filter="REJEITADO">Rejeitados</button>
+      </div>
+
+      <!-- Table -->
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="bookings-table">
+          <thead>
+            <tr>
+              <th>Código</th>
+              <th>Nome</th>
+              <th>WhatsApp</th>
+              <th>Serviço</th>
+              <th>Data</th>
+              <th>Horário</th>
+              <th>Valor</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="bookings-tbody">
+            <tr><td colspan="9" class="table-empty">Carregando...</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- Loading overlay -->
+  <div class="loading-overlay hidden" id="loading-overlay">
+    <div class="spinner"></div>
+    <p>Processando...</p>
+  </div>
+
+  <!-- Modal de confirmação -->
+  <div class="modal-overlay hidden" id="modal-overlay">
+    <div class="modal">
+      <h4 id="modal-title">Confirmar ação</h4>
+      <p id="modal-body"></p>
+      <div class="modal-actions">
+        <button class="btn btn-outline" id="modal-cancel">Cancelar</button>
+        <button class="btn btn-primary" id="modal-confirm">Confirmar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

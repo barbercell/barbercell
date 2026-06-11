@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agendar Horário — BarberCell · Conexão & Régua</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+</head>
+<body class="booking-page">
+
+  <!-- Header -->
+  <header class="page-header">
+    <a href="index.html" class="back-btn">← Voltar</a>
+    <h2 class="page-title">
+      <img src="logo.jpg" alt="BarberCell" />
+      Agendar Horário
+    </h2>
+    <div></div>
+  </header>
+
+  <!-- Progress Steps -->
+  <div class="steps-bar">
+    <div class="step active" data-step="1">
+      <div class="step-circle">1</div>
+      <span>Serviço</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" data-step="2">
+      <div class="step-circle">2</div>
+      <span>Data</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" data-step="3">
+      <div class="step-circle">3</div>
+      <span>Horário</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" data-step="4">
+      <div class="step-circle">4</div>
+      <span>Dados</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" data-step="5">
+      <div class="step-circle">5</div>
+      <span>Pagamento</span>
+    </div>
+  </div>
+
+  <main class="booking-main">
+
+    <!-- PASSO 1: Serviço -->
+    <section class="booking-step active" id="step-1">
+      <h3 class="section-title">Escolha o Serviço</h3>
+      <div class="services-grid" id="services-list">
+        <!-- Preenchido via JS -->
+      </div>
+    </section>
+
+    <!-- PASSO 2: Data -->
+    <section class="booking-step" id="step-2">
+      <h3 class="section-title">Escolha a Data</h3>
+      <div class="calendar-wrapper">
+        <div class="calendar-header">
+          <button class="cal-nav" id="prev-month">‹</button>
+          <span class="cal-month-label" id="cal-month-label"></span>
+          <button class="cal-nav" id="next-month">›</button>
+        </div>
+        <div class="calendar-grid">
+          <div class="cal-day-name">Dom</div>
+          <div class="cal-day-name">Seg</div>
+          <div class="cal-day-name">Ter</div>
+          <div class="cal-day-name">Qua</div>
+          <div class="cal-day-name">Qui</div>
+          <div class="cal-day-name">Sex</div>
+          <div class="cal-day-name">Sáb</div>
+          <div id="calendar-days"></div>
+        </div>
+      </div>
+      <div class="step-actions">
+        <button class="btn btn-outline" onclick="goToStep(1)">Voltar</button>
+      </div>
+    </section>
+
+    <!-- PASSO 3: Horário -->
+    <section class="booking-step" id="step-3">
+      <h3 class="section-title">Escolha o Horário</h3>
+      <p class="section-subtitle" id="selected-date-label"></p>
+      <div class="times-grid" id="times-list">
+        <!-- Preenchido via JS -->
+      </div>
+      <div id="no-times-msg" class="no-times hidden">
+        Nenhum horário disponível para esta data.
+      </div>
+      <div class="step-actions">
+        <button class="btn btn-outline" onclick="goToStep(2)">Voltar</button>
+      </div>
+    </section>
+
+    <!-- PASSO 4: Dados do Cliente -->
+    <section class="booking-step" id="step-4">
+      <h3 class="section-title">Seus Dados</h3>
+      <form class="client-form" id="client-form" novalidate>
+        <div class="form-group">
+          <label for="client-name">Nome completo *</label>
+          <input type="text" id="client-name" placeholder="Seu nome completo" required />
+          <span class="field-error" id="err-name"></span>
+        </div>
+        <div class="form-group">
+          <label for="client-whatsapp">WhatsApp *</label>
+          <input type="tel" id="client-whatsapp" placeholder="(11) 99999-9999" required />
+          <span class="field-error" id="err-whatsapp"></span>
+        </div>
+        <div class="form-group">
+          <label for="client-email">E-mail <span class="optional">(opcional)</span></label>
+          <input type="email" id="client-email" placeholder="seu@email.com" />
+          <span class="field-error" id="err-email"></span>
+        </div>
+
+        <!-- Resumo do agendamento -->
+        <div class="booking-summary">
+          <h4>Resumo do Agendamento</h4>
+          <div class="summary-row"><span>Serviço:</span> <strong id="sum-service">—</strong></div>
+          <div class="summary-row"><span>Data:</span> <strong id="sum-date">—</strong></div>
+          <div class="summary-row"><span>Horário:</span> <strong id="sum-time">—</strong></div>
+          <div class="summary-row highlight"><span>Total:</span> <strong id="sum-value">—</strong></div>
+        </div>
+
+        <div class="step-actions">
+          <button class="btn btn-outline" type="button" onclick="goToStep(3)">Voltar</button>
+          <button class="btn btn-primary" type="submit">Continuar</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- PASSO 5: Pagamento -->
+    <section class="booking-step" id="step-5">
+      <h3 class="section-title">Pagamento via Pix</h3>
+
+      <div class="pix-card">
+        <div class="pix-icon">
+          <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" width="48">
+            <path d="M11.5 11.5L22 22M36.5 11.5L26 22M11.5 36.5L22 26M36.5 36.5L26 26" stroke="#32BCAD" stroke-width="3" stroke-linecap="round"/>
+            <circle cx="24" cy="24" r="3" fill="#32BCAD"/>
+          </svg>
+        </div>
+        <div class="pix-info">
+          <div class="pix-row">
+            <span class="pix-label">Chave Pix</span>
+            <div class="pix-value-wrap">
+              <strong class="pix-value" id="pix-key">—</strong>
+              <button class="copy-btn" id="copy-pix-btn" title="Copiar chave">⧉</button>
+            </div>
+          </div>
+          <div class="pix-row">
+            <span class="pix-label">Recebedor</span>
+            <strong id="pix-receiver">—</strong>
+          </div>
+          <div class="pix-row highlight">
+            <span class="pix-label">Valor</span>
+            <strong id="pix-amount">—</strong>
+          </div>
+        </div>
+      </div>
+
+      <div class="pix-qr-wrap" id="pix-qr-wrap">
+        <img id="pix-qr" src="" alt="QR Code Pix" class="pix-qr hidden" />
+      </div>
+
+      <div class="pix-instructions">
+        <p>📲 Realize o pagamento e envie o comprovante pelo WhatsApp para confirmar seu agendamento.</p>
+      </div>
+
+      <div class="step-actions column">
+        <a href="#" class="btn btn-whatsapp" id="whatsapp-btn" target="_blank">
+          <span>📱</span> Enviar comprovante pelo WhatsApp
+        </a>
+        <button class="btn btn-primary" id="confirm-booking-btn">
+          ✅ Já realizei o pagamento
+        </button>
+        <button class="btn btn-outline" onclick="goToStep(4)">Voltar</button>
+      </div>
+    </section>
+
+    <!-- PASSO 6: Confirmação final -->
+    <section class="booking-step" id="step-6">
+      <div class="success-screen">
+        <div class="success-icon">✅</div>
+        <h3>Agendamento Registrado!</h3>
+        <p>Seu agendamento foi salvo com sucesso.</p>
+        <div class="booking-summary">
+          <div class="summary-row"><span>Código:</span> <strong id="final-id">—</strong></div>
+          <div class="summary-row"><span>Nome:</span> <strong id="final-name">—</strong></div>
+          <div class="summary-row"><span>Serviço:</span> <strong id="final-service">—</strong></div>
+          <div class="summary-row"><span>Data:</span> <strong id="final-date">—</strong></div>
+          <div class="summary-row"><span>Horário:</span> <strong id="final-time">—</strong></div>
+          <div class="summary-row"><span>Status:</span> <strong class="status-badge pending">Aguardando Confirmação</strong></div>
+        </div>
+        <p class="success-note">Aguarde a confirmação do barbeiro. Você pode consultar o status do seu agendamento a qualquer momento.</p>
+        <div class="step-actions">
+          <a href="consulta.html" class="btn btn-secondary">Consultar Status</a>
+          <a href="index.html" class="btn btn-outline">Voltar ao Início</a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Loading overlay -->
+  <div class="loading-overlay hidden" id="loading-overlay">
+    <div class="spinner"></div>
+    <p>Processando...</p>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

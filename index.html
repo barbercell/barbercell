@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BarberCell — Conexão & Régua</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body class="home-page">
+
+  <div class="home-container">
+
+    <!-- Logo -->
+    <div class="hero">
+      <div class="hero-logo">
+        <img src="logo.jpg" alt="BarberCell" class="logo-img" />
+      </div>
+      <p class="hero-slogan">Conexão & Régua</p>
+      <div class="hero-divider"></div>
+      <p class="hero-tagline">Agende pelo celular, chegue com estilo</p>
+    </div>
+
+    <!-- TELA 1: Digite seu telefone -->
+    <div class="entry-card" id="card-phone">
+      <p class="entry-desc">Digite seu número de celular para continuar</p>
+      <div class="form-group">
+        <input type="tel" id="phone-input" placeholder="(21) 99999-9999"
+               maxlength="15" autocomplete="tel" />
+        <span class="field-error" id="err-phone"></span>
+      </div>
+      <button class="btn btn-primary btn-full" id="btn-phone">Continuar →</button>
+    </div>
+
+    <!-- TELA 2: Senha admin -->
+    <div class="entry-card hidden" id="card-password">
+      <div class="admin-badge">🔐 Área Administrativa</div>
+      <p class="entry-desc">Digite a senha para acessar o painel</p>
+      <div class="form-group">
+        <input type="password" id="password-input" placeholder="Senha"
+               autocomplete="current-password" />
+        <span class="field-error" id="err-password"></span>
+      </div>
+      <div class="entry-actions">
+        <button class="btn btn-outline" id="btn-back-phone">← Voltar</button>
+        <button class="btn btn-primary" id="btn-login">Entrar</button>
+      </div>
+    </div>
+
+    <!-- TELA 3: Bem-vindo de volta -->
+    <div class="entry-card hidden" id="card-welcome">
+      <div class="welcome-icon">✂️</div>
+      <h3 class="welcome-title">Bem-vindo de volta,<br><span id="welcome-name"></span>!</h3>
+      <p class="entry-desc" style="margin-top:8px">O que vamos fazer hoje?</p>
+      <div class="entry-actions" style="flex-direction:column; gap:10px">
+        <button class="btn btn-primary btn-full" id="btn-agendar-returning">✂ Agendar Horário</button>
+        <button class="btn btn-secondary btn-full" id="btn-consultar-returning">🔍 Ver meus agendamentos</button>
+      </div>
+      <button class="btn btn-outline btn-full" id="btn-back-welcome" style="margin-top:8px">← Não sou eu</button>
+    </div>
+
+    <!-- TELA 4: Novo cliente — cadastro -->
+    <div class="entry-card hidden" id="card-register">
+      <div class="welcome-icon">👋</div>
+      <h3 class="welcome-title">Você é novo por aqui!</h3>
+      <p class="entry-desc" style="margin-top:8px">Vamos fazer seu cadastro rápido?</p>
+      <div class="form-group">
+        <label for="register-name">Seu nome</label>
+        <input type="text" id="register-name" placeholder="Como você se chama?" autocomplete="name" />
+        <span class="field-error" id="err-register-name"></span>
+      </div>
+      <div class="entry-actions">
+        <button class="btn btn-outline" id="btn-back-register">← Voltar</button>
+        <button class="btn btn-primary" id="btn-register">Cadastrar →</button>
+      </div>
+    </div>
+
+    <!-- Botão WhatsApp -->
+    <a class="btn-wpp-home"
+       href="https://wa.me/5521985900023?text=Olá!%20Vim%20pelo%20site%20da%20BarberCell%20e%20gostaria%20de%20mais%20informações%20sobre%20agendamento%20😊"
+       target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.117 1.526 5.847L.057 23.882l6.195-1.438A11.934 11.934 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.898 0-3.667-.524-5.178-1.432l-.371-.221-3.841.892.921-3.736-.242-.385A9.955 9.955 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+      </svg>
+      Falar no WhatsApp
+    </a>
+
+    <!-- Info da barbearia -->
+    <div class="home-info">
+      <div class="info-item">
+        <span class="info-icon">📍</span>
+        <span>R. Gilmar Nunes da Silva, 03 — Jd. Vila Nova, Duque de Caxias/RJ</span>
+      </div>
+      <div class="info-item">
+        <span class="info-icon">🕐</span>
+        <span>Ter–Sáb · 15h–22h &nbsp;|&nbsp; Dom · 10h–15h</span>
+      </div>
+      <div class="info-item">
+        <span class="info-icon">📱</span>
+        <span>(21) 98590-0023</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="loading-overlay hidden" id="loading-overlay">
+    <div class="spinner"></div>
+    <p id="loading-msg">Verificando...</p>
+  </div>
+
+  <script src="js/api.js"></script>
+  <script>
+    // Formata telefone enquanto digita
+    document.getElementById('phone-input').addEventListener('input', function () {
+      let v = this.value.replace(/\D/g, '').slice(0, 11);
+      if (v.length > 10)     v = v.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
+      else if (v.length > 6) v = v.replace(/^(\d{2})(\d{4})(\d*)$/,   '($1) $2-$3');
+      else if (v.length > 2) v = v.replace(/^(\d{2})(\d*)$/,           '($1) $2');
+      this.value = v;
+    });
+
+    // Enter nos campos
+    document.getElementById('phone-input').addEventListener('keydown',    e => { if (e.key === 'Enter') document.getElementById('btn-phone').click(); });
+    document.getElementById('password-input').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('btn-login').click(); });
+    document.getElementById('register-name').addEventListener('keydown',  e => { if (e.key === 'Enter') document.getElementById('btn-register').click(); });
+
+    // --- TELA 1: Verifica telefone ---
+    document.getElementById('btn-phone').addEventListener('click', async () => {
+      const raw   = document.getElementById('phone-input').value.replace(/\D/g, '');
+      const errEl = document.getElementById('err-phone');
+      errEl.textContent = '';
+
+      if (raw.length < 10) { errEl.textContent = 'Digite um número válido.'; return; }
+
+      showLoading('Verificando...');
+      try {
+        const res = await API.checkPhone(raw);
+
+        if (res.type === 'admin') {
+          sessionStorage.setItem('adminPhone', raw);
+          showCard('card-password');
+
+        } else if (res.type === 'returning') {
+          sessionStorage.setItem('clientPhone', raw);
+          sessionStorage.setItem('clientName',  res.nome);
+          document.getElementById('welcome-name').textContent = res.nome;
+          showCard('card-welcome');
+
+        } else {
+          // Novo cliente
+          sessionStorage.setItem('clientPhone', raw);
+          showCard('card-register');
+          document.getElementById('register-name').focus();
+        }
+      } catch {
+        errEl.textContent = 'Erro ao verificar. Tente novamente.';
+      } finally {
+        hideLoading();
+      }
+    });
+
+    // --- TELA 2: Login admin ---
+    document.getElementById('btn-login').addEventListener('click', async () => {
+      const pwd   = document.getElementById('password-input').value;
+      const errEl = document.getElementById('err-password');
+      errEl.textContent = '';
+      if (!pwd) { errEl.textContent = 'Digite a senha.'; return; }
+
+      showLoading('Verificando...');
+      try {
+        const phone = sessionStorage.getItem('adminPhone') || '';
+        const res   = await API.adminLogin(phone, pwd);
+        if (res.success) {
+          sessionStorage.setItem('adminAuth', 'true');
+          sessionStorage.setItem('adminPwd', pwd);
+          window.location.href = 'admin.html';
+        } else {
+          errEl.textContent = 'Senha incorreta.';
+          document.getElementById('password-input').value = '';
+        }
+      } catch {
+        errEl.textContent = 'Erro. Tente novamente.';
+      } finally {
+        hideLoading();
+      }
+    });
+
+    // --- TELA 3: Cliente retornando ---
+    document.getElementById('btn-agendar-returning').addEventListener('click', () => {
+      window.location.href = 'agendamento.html';
+    });
+    document.getElementById('btn-consultar-returning').addEventListener('click', () => {
+      const phone = sessionStorage.getItem('clientPhone') || '';
+      window.location.href = `consulta.html?phone=${phone}`;
+    });
+
+    // --- TELA 4: Cadastro novo cliente ---
+    document.getElementById('btn-register').addEventListener('click', async () => {
+      const nome  = document.getElementById('register-name').value.trim();
+      const errEl = document.getElementById('err-register-name');
+      errEl.textContent = '';
+
+      if (nome.length < 2) { errEl.textContent = 'Digite seu nome.'; return; }
+
+      showLoading('Salvando cadastro...');
+      try {
+        const phone = sessionStorage.getItem('clientPhone') || '';
+        await API.registerClient(phone, nome);
+        sessionStorage.setItem('clientName', nome);
+        window.location.href = 'agendamento.html';
+      } catch {
+        errEl.textContent = 'Erro ao cadastrar. Tente novamente.';
+      } finally {
+        hideLoading();
+      }
+    });
+
+    // --- Voltar ---
+    document.getElementById('btn-back-phone').addEventListener('click',    () => showCard('card-phone'));
+    document.getElementById('btn-back-welcome').addEventListener('click',  () => showCard('card-phone'));
+    document.getElementById('btn-back-register').addEventListener('click', () => showCard('card-phone'));
+
+    // --- Helpers ---
+    function showCard(id) {
+      ['card-phone','card-password','card-welcome','card-register']
+        .forEach(c => document.getElementById(c).classList.add('hidden'));
+      document.getElementById(id).classList.remove('hidden');
+    }
+
+    function showLoading(msg) {
+      document.getElementById('loading-msg').textContent = msg || 'Aguarde...';
+      document.getElementById('loading-overlay').classList.remove('hidden');
+    }
+
+    function hideLoading() {
+      document.getElementById('loading-overlay').classList.add('hidden');
+    }
+
+    // Exibe telefone da barbearia
+    (async () => {
+      try {
+        const cfg = await API.getConfig();
+        const raw = (cfg.telefoneBarbearia || '').replace(/\D/g, '');
+        if (raw.length >= 10) {
+          const fmt = raw.replace(/^55(\d{2})(\d{4,5})(\d{4})$/, '($1) $2-$3');
+          document.getElementById('info-phone').textContent = fmt || raw;
+        }
+      } catch {}
+    })();
+  </script>
+</body>
+</html>
