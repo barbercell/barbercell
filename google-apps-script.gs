@@ -208,7 +208,7 @@ function checkPhone(phone) {
     return { success: true, data: { type: 'admin' } };
   }
 
-  // Verifica admins adicionais (aba Admins)
+  // Verifica admins adicionais (aba Admins: Telefone | Senha | Nome)
   try {
     const ss     = SpreadsheetApp.getActiveSpreadsheet();
     const admTab = ss.getSheetByName(SHEET_NAME_ADMINS);
@@ -216,7 +216,8 @@ function checkPhone(phone) {
       const rows = admTab.getDataRange().getValues();
       for (let i = 1; i < rows.length; i++) {
         if (String(rows[i][0] || '').replace(/\D/g, '') === inputPhone) {
-          return { success: true, data: { type: 'admin' } };
+          const adminNome = String(rows[i][2] || '').trim();
+          return { success: true, data: { type: 'admin', adminNome } };
         }
       }
     }

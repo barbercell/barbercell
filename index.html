@@ -231,7 +231,7 @@
     function showLoading(msg, mode) {
       const msgs  = mode === 'at' ? LOADING_AT : LOADING_BARBER;
       const msgEl = document.getElementById('loading-msg');
-      msgEl.textContent = msg || msgs[0];
+      msgEl.textContent = msgs[0];
       document.getElementById('loading-overlay').classList.remove('hidden');
       let i = 0;
       _loadingTimer = setInterval(() => {
@@ -299,6 +299,7 @@
         const res = await API.checkPhone(raw);
         if (res.type === 'admin') {
           sessionStorage.setItem('adminPhone', raw);
+          if (res.adminNome) sessionStorage.setItem('adminNome', res.adminNome);
           showCard('card-password');
         } else if (res.type === 'returning') {
           sessionStorage.setItem('clientPhone', raw);
@@ -382,7 +383,16 @@
           sessionStorage.setItem('adminAuth', 'true');
           sessionStorage.setItem('adminPwd', pwd);
           setLoggedIn(null);
-          showCard('card-choose-admin');
+          const adminNome = (sessionStorage.getItem('adminNome') || '').toLowerCase();
+          if (adminNome.includes('ana')) {
+            sessionStorage.setItem('adminType', 'ana');
+            window.location.href = 'assistencia-admin.html';
+          } else if (adminNome.includes('dammy') || adminNome.includes('damy')) {
+            sessionStorage.setItem('adminType', 'dammy');
+            window.location.href = 'admin.html';
+          } else {
+            showCard('card-choose-admin');
+          }
         } else {
           errEl.textContent = 'Senha incorreta.';
           document.getElementById('password-input').value = '';
@@ -467,14 +477,6 @@
       document.getElementById(id).classList.remove('hidden');
     }
 
-    function showLoading(msg) {
-      document.getElementById('loading-msg').textContent = msg || 'Aguarde...';
-      document.getElementById('loading-overlay').classList.remove('hidden');
-    }
-
-    function hideLoading() {
-      document.getElementById('loading-overlay').classList.add('hidden');
-    }
   </script>
 </body>
 </html>
