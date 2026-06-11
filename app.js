@@ -261,9 +261,30 @@ function buildWhatsappLink() {
 
 /* ---- Salvar agendamento ---- */
 
-async function submitBooking() {
+const _MSGS_BOOK = [
+  'Separando a gilete...', 'Ajustando o pezinho...', 'Trocando o pente...',
+  'Afiando a navalha...', 'Preparando a espuma...', 'Checando o horário...',
+  'Confirmando com o barbeiro...', 'Quase pronto...'
+];
+let _bookTimer = null;
+function showBookingLoading() {
+  const msgEl = document.getElementById('loading-msg');
   const overlay = document.getElementById('loading-overlay');
+  msgEl.textContent = _MSGS_BOOK[0];
   overlay.classList.remove('hidden');
+  let i = 0;
+  _bookTimer = setInterval(() => {
+    i = (i + 1) % _MSGS_BOOK.length;
+    msgEl.textContent = _MSGS_BOOK[i];
+  }, 1800);
+}
+function hideBookingLoading() {
+  clearInterval(_bookTimer);
+  document.getElementById('loading-overlay').classList.add('hidden');
+}
+
+async function submitBooking() {
+  showBookingLoading();
   try {
     const serviceNames = state.services.map(s => s.name).join(' + ');
     const totalPrice   = state.services.reduce((sum, s) => sum + s.price, 0);
@@ -279,7 +300,7 @@ async function submitBooking() {
     showToast('Erro ao salvar. Tente novamente.', 'error');
     console.error(err);
   } finally {
-    overlay.classList.add('hidden');
+    hideBookingLoading();
   }
 }
 

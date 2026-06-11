@@ -376,8 +376,27 @@ function todayStr() {
   return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 }
 
+const _MSGS_BARBER = [
+  'Separando a gilete...', 'Ajustando o pezinho...', 'Trocando o pente...',
+  'Afiando a navalha...', 'Preparando a espuma...', 'Checando o corte...',
+  'Limpando a cadeira...', 'Regulando a máquina...'
+];
+let _loadingTimer = null;
 function showLoading(visible) {
-  document.getElementById('loading-overlay').classList.toggle('hidden', !visible);
+  const overlay = document.getElementById('loading-overlay');
+  const msgEl   = document.getElementById('loading-msg');
+  if (visible) {
+    msgEl.textContent = _MSGS_BARBER[0];
+    overlay.classList.remove('hidden');
+    let i = 0;
+    _loadingTimer = setInterval(() => {
+      i = (i + 1) % _MSGS_BARBER.length;
+      msgEl.textContent = _MSGS_BARBER[i];
+    }, 1800);
+  } else {
+    clearInterval(_loadingTimer);
+    overlay.classList.add('hidden');
+  }
 }
 
 function statusClass(status) {

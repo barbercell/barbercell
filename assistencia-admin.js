@@ -193,7 +193,28 @@ document.getElementById('modal-confirm').addEventListener('click', async () => {
 });
 
 /* ----- Helpers ----- */
-function showLoading(v) { document.getElementById('loading-overlay').classList.toggle('hidden', !v); }
+const _MSGS_AT = [
+  'Verificando o conector...', 'Testando a tela...', 'Checando a bateria...',
+  'Diagnóstico em andamento...', 'Limpando contatos...', 'Testando o software...',
+  'Calibrando o sensor...', 'Verificando a placa...'
+];
+let _loadingTimer = null;
+function showLoading(v) {
+  const overlay = document.getElementById('loading-overlay');
+  const msgEl   = document.getElementById('loading-msg');
+  if (v) {
+    msgEl.textContent = _MSGS_AT[0];
+    overlay.classList.remove('hidden');
+    let i = 0;
+    _loadingTimer = setInterval(() => {
+      i = (i + 1) % _MSGS_AT.length;
+      msgEl.textContent = _MSGS_AT[i];
+    }, 1800);
+  } else {
+    clearInterval(_loadingTimer);
+    overlay.classList.add('hidden');
+  }
+}
 
 function formatDate(val) {
   if (!val) return '—';
