@@ -119,18 +119,34 @@ const API = {
     return res.data;
   },
 
-  /* --- helper interno: tudo via POST text/plain (evita CORS preflight) --- */
+  /* --- helper interno: JSONP (sem restrição de CORS, funciona de qualquer origin) --- */
 
-  async _post(body) {
-    const res = await fetch(CONFIG.GAS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(body),
-      redirect: 'follow',
+  _jsonp(params) {
+    return new Promise((resolve, reject) => {
+      const cbName = '_gcb' + Date.now() + Math.random().toString(36).slice(2, 6);
+      const script = document.createElement('script');
+      const timer  = setTimeout(() => { cleanup(); reject(new Error('Timeout')); }, 15000);
+
+      function cleanup() {
+        clearTimeout(timer);
+        delete window[cbName];
+        if (script.parentNode) script.parentNode.removeChild(script);
+      }
+
+      window[cbName] = (data) => { cleanup(); resolve(data); };
+
+      const url = new URL(CONFIG.GAS_URL);
+      url.searchParams.set('callback', cbName);
+      Object.entries(params).forEach(([k, v]) => {
+        if (v !== undefined && v !== null) url.searchParams.set(k, String(v));
+      });
+
+      script.src = url.toString();
+      script.onerror = () => { cleanup(); reject(new Error('Erro de rede')); };
+      document.head.appendChild(script);
     });
-    return res.json();
   },
 
-  // alias mantido para compatibilidade interna
-  async _get(params) { return this._post(params); },
+  async _post(body)  { return this._jsonp(body); },
+  async _get(params) { return this._jsonp(params); },
 };

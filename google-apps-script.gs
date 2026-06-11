@@ -85,10 +85,20 @@ function initSheet() {
    ROTEADOR GET (ping / fallback)
 ----------------------------------------------- */
 function doGet(e) {
-  // Redireciona GET para o mesmo handler do POST
-  // (GET é usado apenas como fallback — produção usa POST)
-  const p = e.parameter || {};
-  return routeAction(p.action || '', p);
+  const p        = Object.assign({}, e.parameter || {});
+  const callback = p.callback || null;
+  delete p.callback;
+
+  const result = routeAction(p.action || '', p);
+  const json   = result.getContent();
+
+  if (callback) {
+    // JSONP — envolve a resposta na função callback (sem CORS)
+    return ContentService
+      .createTextOutput(callback + '(' + json + ')')
+      .setMimeType(ContentService.MimeType.JAVASCRIPT);
+  }
+  return result;
 }
 
 /* -----------------------------------------------
